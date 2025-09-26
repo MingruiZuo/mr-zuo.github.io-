@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>六爻占卜 - 大衍筮法</title>
+<style>
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'SimSun', 'STKaiti', serif;
+    background: linear-gradient(135deg, #f9f7f0 0%, #e8e1cf 100%);
+    color: #3a2615;
+    min-height: 100vh;
+    padding: 20px;
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    background: rgba(255, 253, 245, 0.95);
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    padding: 30px;
+    border: 1px solid #d4c5a8;
+}
+
+header {
+    text-align: center;
+    padding: 20px 0;
+    margin-bottom: 30px;
+    border-bottom: 2px solid #d4c5a8;
+}
+
+h1 {
+    color: #8c3c1c;
+    margin-bottom: 10px;
+    font-size: 2.5rem;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+}
+
+.subtitle {
+    color: #6b4c2c;
+    font-size: 1.2rem;
+    max-width: 800px;
+    margin: 0 auto;
+    line-height: 1.6;
+}
+
+.main-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+}
+
+@media (max-width: 900px) {
+    .main-content {
+        grid-template-columns: 1fr;
+    }
+}
+
+.divination-section {
+    background: #f3eee2;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border: 1px solid #d4c5a8;
+}
+
+.divination-section h2 {
+    color: #8c3c1c;
+    margin-bottom: 20px;
+    text-align: center;
+    border-bottom: 1px solid #d4c5a8;
+    padding-bottom: 10px;
+}
+
+.note-input {
+    margin: 15px 0;
+}
+
+.note-input input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #d4c5a8;
+    border-radius: 5px;
+    background: #faf7f0;
+}
+
+.button-container {
+    text-align: center;
+    margin: 25px 0;
+}
+
+.divinate-btn {
+    background: #8c3c1c;
+    color: #fff;
+    border: none;
+    padding: 15px 30px;
+    font-size: 1.2rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.divinate-btn:hover {
+    background: #6b2d14;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25);
+}
+
+.secondary-btn {
+    background: #6b4c2c;
+    padding: 10px 20px;
+    font-size: 1rem;
+}
+
+.output-area {
+    width: 100%;
+    height: 400px;
+    padding: 15px;
+    background: #faf7f0;
+    border: 1px solid #d4c5a8;
+    border-radius: 8px;
+    font-family: 'SimSun', monospace;
+    font-size: 1rem;
+    line-height: 1.5;
+    resize: none;
+    margin: 15px 0;
+    white-space: pre-wrap;
+    overflow-y: auto;
+}
+
+.nav-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin: 15px 0;
+}
+
+.history-section {
+    background: #f3eee2;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border: 1px solid #d4c5a8;
+    max-height: 800px;
+    overflow-y: auto;
+}
+
+.history-section h2 {
+    color: #8c3c1c;
+    margin-bottom: 20px;
+    text-align: center;
+    border-bottom: 1px solid #d4c5a8;
+    padding-bottom: 10px;
+}
+
+.search-box {
+    margin: 15px 0;
+    display: flex;
+    gap: 10px;
+}
+
+.search-box input {
+    flex: 1;
+    padding: 8px;
+    border: 1px solid #d4c5a8;
+    border-radius: 5px;
+    background: #faf7f0;
+}
+
+.history-list {
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+.history-item {
+    padding: 15px;
+    margin: 10px 0;
+    background: #faf7f0;
+    border-radius: 8px;
+    border: 1px solid #d4c5a8;
+    position: relative;
+}
+
+.history-date {
+    font-size: 0.9rem;
+    color: #6b4c2c;
+    margin-bottom: 5px;
+}
+
+.history-note {
+    margin: 5px 0;
+    font-style: italic;
+    color: #5a402c;
+}
+
+.history-gua {
+    margin: 5px 0;
+    font-weight: bold;
+    color: #8c3c1c;
+}
+
+.detail-btn {
+    margin-left: 10px;
+    cursor: pointer;
+    color: #2E8B57;
+    text-decoration: underline;
+}
+
+.detail-content {
+    display: none;
+    margin-top: 10px;
+    white-space: pre-wrap;
+    font-family: monospace;
+    border-top: 1px dashed #aaa;
+    padding-top: 10px;
+    font-size: 0.9rem;
+}
+
+.rating {
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.rating select {
+    padding: 5px;
+    border: 1px solid #d4c5a8;
+    border-radius: 4px;
+    background: #faf7f0;
+}
+
+.delete-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: #d32f2f;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 5px 10px;
+    cursor: pointer;
+    font-size: 0.8rem;
+}
+
+.avg-score {
+    font-weight: bold;
+    color: #8c3c1c;
+    margin: 15px 0;
+    text-align: center;
+    font-size: 1.1rem;
+}
+
+.info-section {
+    margin-top: 30px;
+    padding: 20px;
+    background: #f3eee2;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border: 1px solid #d4c5a8;
+}
+
+.info-section h3 {
+    color: #8c3c1c;
+    margin-bottom: 15px;
+    text-align: center;
+    border-bottom: 1px solid #d4c5a8;
+    padding-bottom: 10px;
+}
+
+.info-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.info-item {
+    margin-bottom: 10px;
+}
+
+footer {
+    text-align: center;
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #d4c5a8;
+    color: #6b4c2c;
+    font-size: 0.9rem;
+}
+
+.symbol {
+    display: inline-block;
+    width: 30px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+</style>
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>六爻占卜 - 大衍筮法</h1>
+        <p class="subtitle">遵循"留一分二-挂一揲四-归奇三变-六爻成卦"的传统占卜流程</p>
+    </header>
+
+    <div class="main-content">
+        <div class="divination-section">
+            <h2>占卜区域</h2>
+            <p>心诚或灵，大事勿问询鬼神，小事不轻易占卜。</p>
+            <p>尊重他人信仰，拒绝封建迷信，相信科学理性。</p>
+            
+            <div class="note-input">
+                <label for="remark">占卜备注：</label>
+                <input type="text" id="remark" placeholder="请输入本次占卜的问题或备注...">
+            </div>
+            
+            <div class="button-container">
+                <button class="divinate-btn" onclick="castYao()">蓍草起卦</button>
+                <button class="divinate-btn secondary-btn" onclick="clearHistory()">清空历史</button>
+            </div>
+            
+            <div class="output-area" id="output"></div>
+            
+            <div class="nav-buttons">
+                <button class="divinate-btn secondary-btn" id="prevPage" onclick="showPreviousPage()" style="display:none">查看过程</button>
+                <button class="divinate-btn secondary-btn" id="nextPage" onclick="showNextPage()" style="display:none">查看结果</button>
+            </div>
+        </div>
+        
+        <div class="history-section">
+            <h2>历史记录</h2>
+            
+            <div class="search-box">
+                <input type="text" id="searchRemark" placeholder="搜索备注内容..." oninput="searchHistory()">
+                <button class="secondary-btn" onclick="clearSearch()">清除</button>
+            </div>
+            
+            <div class="avg-score" id="avgScore"></div>
+            
+            <div class="history-list" id="history">
+                <p style="text-align: center; color: #6b4c2c;">暂无历史记录</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="info-section">
+        <h3>信息说明</h3>
+        <div class="info-content">
+            <div class="info-item">Reference：《周易》</div>
+            <div class="info-item">方法/Python/source code：镜公子</div>
+            <div class="info-item">Contact: 2366782564@qq.com</div>
+            <div class="info-item">前端/exe/html/JS：ChatGPT</div>
+            <div class="info-item">美化：Deepseek</div>
+        </div>
+    </div>
+    
+    <footer>
+        <p>起卦不能等同于解卦，结果仅供参考，免费批判学习，不得传播商用</p>
+        <p>感谢"歌清昼"等首发版本用户的反馈和强烈催更</p>
+        <p>作者：镜公子</p>
+    </footer>
+</div>
+
+<script>
+// --- 卦象数据 ---
+const xiang4 = {
+    6: ["×", "=", "-", "-"], 
+    7: ["-", "-", "-", "="], 
+    8: ["=", "=", "=", "-"], 
+    9: ["o", "-", "=", "="]
+};
+
+const gua8 = {
+    "---": ["乾", "天"],
+    "===": ["坤", "地"],
+    "-=-": ["离", "火"],
+    "=-=": ["坎", "水"],
+    "-==": ["震", "雷"],
+    "==-": ["艮", "山"],
+    "--=": ["兑", "泽"],
+    "=--": ["巽", "风"]
+};
+
+const gua64 = {
+  "乾乾": "乾为天", "乾兑": "天泽履", "乾离": "天火同人", "乾震": "天雷无妄",
+  "乾巽": "天风姤", "乾坎": "天水讼", "乾艮": "天山遁", "乾坤": "天地否",
+
+  "兑乾": "泽天夬", "兑兑": "兑为泽", "兑离": "泽火革", "兑震": "泽雷随",
+  "兑巽": "泽风大过", "兑坎": "泽水困", "兑艮": "兑为山", "兑坤": "泽地萃",
+
+  "离乾": "火天大有", "离兑": "火泽晋", "离离": "离为火", "离震": "火雷噬嗑",
+  "离巽": "火风鼎", "离坎": "火水未济", "离艮": "火山旅", "离坤": "火地晋",
+
+  "震乾": "雷天大壮", "震兑": "雷泽归妹", "震离": "雷火丰", "震震": "震为雷",
+  "震巽": "雷风恒", "震坎": "雷水解", "震艮": "雷山颐", "震坤": "雷地豫",
+
+  "巽乾": "风天小畜", "巽兑": "风泽中孚", "巽离": "风火家人", "巽震": "风雷益",
+  "巽巽": "巽为风", "巽坎": "风水涣", "巽艮": "风山渐", "巽坤": "地风升",
+
+  "坎乾": "水天需", "坎兑": "水泽节", "坎离": "水火既济", "坎震": "水雷屯",
+  "坎巽": "水风井", "坎坎": "坎为水", "坎艮": "水山蹇", "坎坤": "地水师",
+
+  "艮乾": "山天大畜", "艮兑": "山泽损", "艮离": "山火贲", "艮震": "山雷颐",
+  "艮巽": "风山渐", "艮坎": "水山蹇", "艮艮": "艮为山", "艮坤": "地山谦",
+
+  "坤乾": "地天泰", "坤兑": "地泽临", "坤离": "地火明夷", "坤震": "地雷复",
+  "坤巽": "地风升", "坤坎": "水地比", "坤艮": "地山谦", "坤坤": "坤为地"
+};
+
+// --- 辅助函数 ---
+function mod4(n) {
+    return n % 4 === 0 ? 4 : n % 4;
+}
+
+function trial(bian, num) { 
+    let a = Math.floor(Math.random() * num) + 1; 
+    let b = num - a; 
+    let yao = 1 + mod4(a) + mod4(b);
+    let result = `${bian}变：${a}余${mod4(a)}, ${b}余${mod4(b)}, 归奇得${yao}, 合${num+1}余${num+1-yao}\n`;
+    return {yao, result};
+}
+
+function yaoFunction() {
+    let n1 = 48, t1 = trial(1, n1);
+    let n2 = n1 - t1.yao, t2 = trial(2, n2);
+    let n3 = n2 - t2.yao, t3 = trial(3, n3);
+    let finalYao = (n3 + 1 - t3.yao) / 4;
+    let text = `本爻得数为：${finalYao}\n\n`;
+    return {yao: finalYao, text: t1.result + t2.result + t3.result + text};
+}
+
+// --- 卦生成 ---
+let yaoResults = [], yaoText = "", guaText = "", page = 0;
+
+function generateGua() {
+    let gua = [], theGua = "", rawGua = "", zhiGua = "", cuoGua = "", excGua = "", zonGua = "";
+    for(let i = 0; i < 6; i++) {
+        let y = yaoResults[i]; 
+        gua.push(y);
+        theGua += xiang4[y][0];
+        rawGua += xiang4[y][1];
+        zhiGua += xiang4[y][2];
+        cuoGua += xiang4[y][3];
+    }
+    zonGua = rawGua.split("").reverse().join("");
+    excGua = rawGua.slice(1, 4) + rawGua.slice(2, 5);
+
+    function guaName(raw) { 
+        let key = gua8[raw.slice(0, 3)][0] + gua8[raw.slice(3, 6)][0]; 
+        return gua64[key] || "未知卦";
+    }
+
+    let output = "";
+    output += `六爻取数：${gua}\n卦象：${theGua}\n`;
+    output += `本卦：${rawGua}, 上${gua8[rawGua.slice(3, 6)][0]} 下${gua8[rawGua.slice(0, 3)][0]} ${guaName(rawGua)}\n`;
+    output += `互卦：${excGua}, 上${gua8[excGua.slice(3, 6)][0]} 下${gua8[excGua.slice(0, 3)][0]} ${guaName(excGua)}\n`;
+    output += `之卦：${zhiGua}, 上${gua8[zhiGua.slice(3, 6)][0]} 下${gua8[zhiGua.slice(0, 3)][0]} ${guaName(zhiGua)}\n`;
+    output += `错卦：${cuoGua}, 上${gua8[cuoGua.slice(3, 6)][0]} 下${gua8[cuoGua.slice(0, 3)][0]} ${guaName(cuoGua)}\n`;
+    output += `综卦：${zonGua}, 上${gua8[zonGua.slice(3, 6)][0]} 下${gua8[zonGua.slice(0, 3)][0]} ${guaName(zonGua)}\n`;
+    return output;
+}
+
+// --- 历史管理 ---
+function loadHistory(filterRemark = "") {
+    let hist = JSON.parse(localStorage.getItem("yaoHistory") || "[]");
+    let div = document.getElementById("history");
+    div.innerHTML = "";
+    
+    if (hist.length === 0) {
+        div.innerHTML = '<p style="text-align: center; color: #6b4c2c;">暂无历史记录</p>';
+        return;
+    }
+    
+    let totalScore = 0, countScore = 0;
+    
+    hist.forEach((item, idx) => {
+        if (filterRemark && !item.remark.includes(filterRemark)) return;
+        
+        let html = `<div class="history-item">
+            <div class="history-date">${item.time}</div>
+            <div class="history-note">${item.remark || '无备注'}</div>
+            <div class="history-gua">${item.result.split("\n").slice(0, 3).join("<br>")}</div>
+            <span class="detail-btn" onclick="toggleDetail(${idx})">显示详细</span>
+            <div class="detail-content" id="detail-${idx}">${item.result.replace(/\n/g, "<br>")}</div>
+            <div class="rating">
+              评分：
+              <select onchange="updateRating(${idx}, this.value)">
+                <option value="">未评分</option>
+                ${[...Array(10)].map((_, i) => `<option value="${i+1}" ${item.score == i+1 ? "selected" : ""}>${i+1}</option>`).join('')}
+              </select>
+            </div>
+            <button class="delete-btn" onclick="deleteHistory(${idx})">删除</button>
+        </div>`;
+        
+        div.innerHTML += html;
+        if (item.score) { 
+            totalScore += item.score; 
+            countScore++; 
+        }
+    });
+    
+    let avg = document.getElementById("avgScore");
+    avg.textContent = countScore > 0 ? `平均评分：${(totalScore / countScore).toFixed(1)}` : "";
+}
+
+function updateRating(idx, val) {
+    let hist = JSON.parse(localStorage.getItem("yaoHistory") || "[]");
+    hist[idx].score = val ? parseInt(val) : null;
+    localStorage.setItem("yaoHistory", JSON.stringify(hist));
+    loadHistory(document.getElementById("searchRemark").value);
+}
+
+function toggleDetail(idx) {
+    let ele = document.getElementById(`detail-${idx}`);
+    ele.style.display = ele.style.display === "none" ? "block" : "none";
+    
+    // 更新按钮文本
+    let btn = ele.previousElementSibling;
+    btn.textContent = ele.style.display === "none" ? "显示详细" : "隐藏详细";
+}
+
+function saveHistory(result, remark) {
+    let hist = JSON.parse(localStorage.getItem("yaoHistory") || "[]");
+    hist.push({
+        time: new Date().toLocaleString(),
+        result: result,
+        remark: remark,
+        score: null
+    });
+    localStorage.setItem("yaoHistory", JSON.stringify(hist));
+    loadHistory();
+}
+
+function deleteHistory(idx) {
+    let hist = JSON.parse(localStorage.getItem("yaoHistory") || "[]");
+    hist.splice(idx, 1);
+    localStorage.setItem("yaoHistory", JSON.stringify(hist));
+    loadHistory();
+}
+
+function clearHistory() {
+    if (confirm("确定清空所有历史吗？此操作不可撤销。")) {
+        localStorage.removeItem("yaoHistory");
+        loadHistory();
+    }
+}
+
+function searchHistory() {
+    let val = document.getElementById("searchRemark").value;
+    loadHistory(val);
+}
+
+function clearSearch() {
+    document.getElementById("searchRemark").value = "";
+    loadHistory();
+}
+
+// --- 占卜过程（动画版） ---
+async function castYao() {
+    yaoResults = []; 
+    yaoText = ""; 
+    guaText = ""; 
+    page = 0;
+    
+    let outputArea = document.getElementById("output");
+    outputArea.textContent = "";
+    let remark = document.getElementById("remark").value;
+    
+    for (let i = 0; i < 6; i++) {
+        let res = yaoFunction();
+        yaoResults.push(res.yao);
+        
+        let lines = res.text.split("\n");
+        for (let line of lines) {
+            if (line.trim() !== "") {
+                outputArea.textContent += line + "\n";
+                outputArea.scrollTop = outputArea.scrollHeight;
+                await new Promise(r => setTimeout(r, 50));
+            }
+        }
+        yaoText += res.text;
+    }
+    
+    guaText = generateGua();
+    outputArea.textContent = guaText;
+    
+    saveHistory(yaoText + guaText, remark);
+    
+    document.getElementById("prevPage").style.display = "inline";
+    document.getElementById("nextPage").style.display = "inline";
+}
+
+function showPreviousPage() {
+    document.getElementById("output").textContent = yaoText;
+}
+
+function showNextPage() {
+    document.getElementById("output").textContent = guaText;
+}
+
+// 初始化历史
+loadHistory();
+</script>
+</body>
+</html>
